@@ -11,11 +11,8 @@ public:
     typedef std::shared_ptr<TrajectoryUI> Ptr;
     typedef std::shared_ptr<const TrajectoryUI> ConstPtr;
 
-    TrajectoryUI(Vec3 color, float line_width, float point_size, std::size_t max_capicity = 1e8)
-        : UIItem(color, line_width, point_size)
-        , max_capicity_(std::move(max_capicity)) {
-        poses_.reserve(max_capicity_);
-    }
+    TrajectoryUI(Vec3 color = Vec3(1.0, 0.0, 0.0), float line_width = 3.0, float point_size = 5.0,
+                 std::size_t max_capicity = 1e8);
 
     TrajectoryUI(const TrajectoryUI &) = delete;
 
@@ -25,27 +22,19 @@ public:
     void Render() override;
 
     /// 向轨迹中添加点
-    void AddPt(const Vec3 &pt) {
-        if (poses_.size() >= max_capicity_)
-            poses_.erase(poses_.begin(), poses_.end() + 2e7);
+    void AddPt(const Vec3 &pt);
 
-        poses_.push_back(pt);
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            vbo_ = pangolin::GlBuffer(pangolin::GlArrayBuffer, poses_);
-        }
-    }
+    /// 相轨迹中添加位姿
+    void AddPt(const SE3 &Twi) { AddPt(Twi.translation()); }
+
+    /// 更新函数
+    void Update() override;
 
     /// 清空选项
-    void Clear() override {
-        poses_.clear();
-        poses_.reserve(max_capicity_);
+    void Clear() override;
 
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            vbo_.Free();
-        }
-    }
+    /// 重置Twi位姿
+    void ResetTwi(const SE3 &Twi) override;
 
 private:
     std::size_t max_capicity_; ///< 轨迹最大容量
