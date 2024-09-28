@@ -1,0 +1,5 @@
+add_executable(point_cloud_example point_cloud_example.cc)
+target_link_libraries(point_cloud_example slam_viewer)
+
+add_executable(trajectory_example trajectory_example.cc)
+target_link_libraries(trajectory_example slam_viewer)
