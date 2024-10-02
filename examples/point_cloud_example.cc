@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
     /// 3. 创建一个可视化窗口
     auto viewer = std::make_shared<WindowImpl>();
     viewer->AddUIItem(cloud_ui);
+    viewer->AddMenuShow();
 
     std::thread viewer_thread(&WindowImpl::Run, viewer);
 

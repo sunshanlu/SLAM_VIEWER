@@ -12,20 +12,18 @@ NAMESPACE_BEGIN
  * @param cam_z_near 输入的最近可视距离
  * @param cam_z_far  输入的远视可视距离
  */
-WindowImpl::WindowImpl(std::string win_name, int width, int height, float cam_focus, float cam_z_near, float cam_z_far)
+WindowImpl::WindowImpl(std::string win_name, int width, int height)
     : window_name_(std::move(win_name))
     , width_(std::move(width))
     , height_(std::move(height))
-    , cam_focus_(std::move(cam_focus))
-    , cam_z_near_(std::move(cam_z_near))
-    , cam_z_far_(std::move(cam_z_far))
     , threed_display_name_("3d_display")
     , menu_display_name_("menu")
     , plot_display_name_("plotters")
     , request_stop_(false)
     , add_plot_(false)
     , add_menu_(false)
-    , add_imgs_(false) {
+    , add_imgs_(false)
+    , add_3d_(false) {
     pangolin::CreateWindowAndBind(window_name_, width_, height_);
     pangolin::GetBoundWindow()->RemoveCurrent(); ///< 将该窗口从主线程中移除
 }
@@ -49,8 +47,15 @@ void WindowImpl::AddImageShow(std::string win_name) {
  *
  * @param plot_name 输入的数据图窗口名称
  * @param labels    输入的数据图的标签
+ * @param left      输入的左边界，default -10
+ * @param right     输入的右边界，default 600
+ * @param bottom    输入的下边界，default -11
+ * @param top       输入的上边界，default 11
+ * @param tickx     输入的x轴刻度间隔，default 75
+ * @param ticky     输入的y轴刻度间隔，default 2
  */
-void WindowImpl::AddPlotterShow(std::string plot_name, std::vector<std::string> labels) {
+void WindowImpl::AddPlotterShow(std::string plot_name, std::vector<std::string> labels, float left, float right,
+                                float bottom, float top, float tickx, float ticky) {
     add_plot_ = true;
 
     if (plotters_.find(plot_name) != plotters_.end())
@@ -58,12 +63,8 @@ void WindowImpl::AddPlotterShow(std::string plot_name, std::vector<std::string> 
 
     auto data_log = std::make_shared<pangolin::DataLog>();
     data_log->SetLabels(std::move(labels));
-    plotters_.insert({std::move(plot_name), data_log});
-    auto plotter_table = std::make_unique<pangolin::Plotter>(data_log.get(), -10, 600, -11, 11, 75, 2);
-    plotter_table->SetBounds(0.02, 0.98, 0.0, 1.0);
-    plotter_table->Track("$i");
-    plotter_table->SetBackgroundColour(pangolin::Colour(248. / 255, 248. / 255, 255. / 255));
-    plotter_tables_.push_back(std::move(plotter_table));
+    plotters_.insert({plot_name, data_log});
+    plotter_param_.insert({std::move(plot_name), {left, right, bottom, top, tickx, ticky}});
 }
 
 /**
@@ -77,19 +78,31 @@ void WindowImpl::AddPlotterShow(std::string plot_name, std::vector<std::string> 
 void WindowImpl::AddMenuShow() {
     add_menu_ = true;
 
+    menu_ = std::make_shared<Menu>(menu_display_name_);
+    AddMenuItems();
+}
+
+/**
+ * @brief 添加菜单元素，设计成可继承的形式，便于拓展
+ *
+ */
+void WindowImpl::AddMenuItems() {
     /// 1. follow 相机跟踪模式
-    button_names_.push_back(menu_display_name_ + "." + "Follow");
-    button_funcs_.push_back([this]() -> void { s_cam_main_.Follow(curr_pose_.matrix()); });
+    menu_->AddCheckBoxItem("Follow", [this](bool checked) {
+        if (checked)
+            default_camera_->SetFollow();
+    });
 
     /// 2. 设置上帝视角
-    button_names_.push_back(menu_display_name_ + "." + "God View");
-    button_funcs_.push_back(
-        [this]() { s_cam_main_.SetModelViewMatrix(pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisY)); });
+    menu_->AddButtonItem("God View", [this](bool pushed) {
+        if (pushed)
+            default_camera_->SetModelView(pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisX));
+    });
 
     /// 3. 设置前置视角
-    button_names_.push_back(menu_display_name_ + "." + "Front View");
-    button_funcs_.push_back([this]() {
-        s_cam_main_.SetModelViewMatrix(pangolin::ModelViewLookAt(-50, 0, 10, 50, 0, 10, pangolin::AxisZ));
+    menu_->AddButtonItem("Front View", [this](bool pushed) {
+        if (pushed)
+            default_camera_->SetModelView(pangolin::ModelViewLookAt(-50, 0, 10, 0, 0, 0, pangolin::AxisZ));
     });
 }
 
@@ -108,27 +121,18 @@ void WindowImpl::Run() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     CreateDisplayLayout();
+
     while (!pangolin::ShouldQuit() && !request_stop_.load()) {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (int i = 0; i < buttons_.size(); ++i) {
-            auto button = buttons_[i];
-            auto button_func = button_funcs_[i];
-            if (button)
-                button_func();
-        }
+        menu_->Update();           ///< menu菜单功能函数运行
+        default_camera_->Update(); ///< 相机渲染状态更新
 
-        Render();
-
-        std::lock_guard<std::mutex> lock(image_mutex_);
-        for (auto &image_item : images_) {
-            if (!image_item.second.empty())
-                cv::imshow(image_item.first, image_item.second);
-        }
-
+        Render3d();
+        RenderImgs();
         pangolin::FinishFrame();
-        std::this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(30ms);
     }
 }
 
@@ -154,32 +158,51 @@ void WindowImpl::CreateDisplayLayout() {
         left_range = 0.2;
     }
 
-    auto proj_mat_main = pangolin::ProjectionMatrix(width_, height_ * range, cam_focus_, cam_focus_, width_ * 0.5f,
-                                                    height_ * range * 0.5, cam_z_near_, cam_z_far_);
-    auto model_view_main = pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisY);
-    s_cam_main_ = pangolin::OpenGlRenderState(std::move(proj_mat_main), std::move(model_view_main));
+    if (!default_camera_)
+        default_camera_ = std::make_shared<Camera>("default_camera_");
 
-    /// menu空间窗口
-    if (add_menu_) {
-        pangolin::View &menu = pangolin::CreatePanel(menu_display_name_).SetBounds(0.0, 1.0, 0.0, left_range);
-        for (const auto &button_name : button_names_) {
-            pangolin::Var<bool> button(button_name, false, true);
-            buttons_.push_back(button);
-        }
+    /// menu空间窗口，但是menu窗口不可以单独出现
+    if (add_menu_ && (add_3d_ || add_plot_)) {
+
+        /// 让menu接收Bounds函数，用来设置布局信息
+        menu_->CreateDisplayLayout();
+        if (add_3d_)
+            menu_->SetBounds(0.0, 1.0, 0.0, left_range);
+        else
+            menu_->SetBounds(0.0, 1.0, 0.0, 0.5);
     }
 
     /// 3d空间窗口
-    pangolin::View &threed_display = pangolin::Display(threed_display_name_)
-                                         .SetBounds(0, 1, left_range, 1 - right_range)
-                                         .SetHandler(new pangolin::Handler3D(s_cam_main_));
+    if (add_3d_) {
+        pangolin::View &threed_display = pangolin::Display(threed_display_name_)
+                                             .SetBounds(0, 1, left_range, 1 - right_range)
+                                             .SetHandler(new pangolin::Handler3D(default_camera_->RenderState()));
+    }
 
     /// plot空间窗口
     if (add_plot_) {
-        pangolin::View &plot_display = pangolin::Display(plot_display_name_)
-                                           .SetBounds(0, 1, 1 - right_range, 1)
-                                           .SetLayout(pangolin::LayoutEqualVertical);
-        for (auto &plotter : plotter_tables_)
-            plot_display.AddDisplay(*plotter);
+        pangolin::View &plot_display = pangolin::Display(plot_display_name_).SetLayout(pangolin::LayoutEqualVertical);
+        /// 如果3d空间存在，则plot空间在3d空间的右侧
+        if (add_3d_)
+            plot_display.SetBounds(0, 1, 1 - right_range, 1);
+        /// 如果3d空间不存在，且menu_存在，则plot空间在menu空间的右侧
+        else if (add_menu_)
+            plot_display.SetBounds(0, 1, 0.5, 1.0);
+        else
+            plot_display.SetBounds(0, 1, 0, 1);
+
+        for (auto &plotter : plotters_) {
+            const auto &plotter_param = plotter_param_.at(plotter.first);
+
+            auto plotter_table = std::make_unique<pangolin::Plotter>(
+                plotter.second.get(), plotter_param[0], plotter_param[1], plotter_param[2], plotter_param[3],
+                plotter_param[4], plotter_param[5]);
+            plotter_table->SetBounds(0.02, 0.98, 0.0, 1.0);
+            plotter_table->Track("$i");
+            plotter_table->SetBackgroundColour(pangolin::Colour(248. / 255, 248. / 255, 255. / 255));
+            plot_display.AddDisplay(*plotter_table);
+            plotter_tables_.push_back(std::move(plotter_table));
+        }
     }
 }
 
@@ -209,6 +232,37 @@ void WindowImpl::UpdatePlotters(const std::string &plot_name, const std::vector<
         return;
 
     plotters_[plot_name]->Log(data);
+}
+
+/**
+ * @brief 渲染3d窗口内的所有元素，先更新再渲染
+ *
+ */
+void WindowImpl::Render3d() {
+    auto &display_3d = pangolin::Display(threed_display_name_);
+    if (display_3d.IsShown()) {
+        display_3d.Activate(default_camera_->RenderState());
+        default_camera_->BindDisplay(threed_display_name_);
+        if (ui_items_.empty())
+            return;
+
+        for (const auto &item : ui_items_) {
+            item->Update();
+            item->Render();
+        }
+    }
+}
+
+/**
+ * @brief 渲染图像
+ *
+ */
+void WindowImpl::RenderImgs() {
+    std::lock_guard<std::mutex> lock(image_mutex_);
+    for (auto &image_item : images_) {
+        if (!image_item.second.empty())
+            cv::imshow(image_item.first, image_item.second);
+    }
 }
 
 NAMESPACE_END

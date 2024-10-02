@@ -15,10 +15,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include /usr/include/eigen3 ${PCL_INCLUDE_DIRS})
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/core 
+    /usr/include/eigen3
+    ${PCL_INCLUDE_DIRS})
 
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
+
 add_library(slam_viewer SHARED ${SRC_FILES})
-target_link_libraries(slam_viewer ${Pangolin_LIBRARY} ${PCL_LIBRARIES} Sophus::Sophus TBB::tbb ${OpenCV_LIBS})
+target_link_libraries(slam_viewer ${Pangolin_LIBRARY} ${PCL_LIBRARIES}
+                      Sophus::Sophus TBB::tbb ${OpenCV_LIBS})
 
 add_subdirectory(examples)

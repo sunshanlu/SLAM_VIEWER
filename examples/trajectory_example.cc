@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
         trajectory_array.push_back(Twi);
     }
 
-    /// 2. 创建一个点云UI
+    /// 2. 创建一个轨迹UI
     TrajectoryUI::Ptr trajectory_ui = std::make_shared<TrajectoryUI>();
 
     /// 3. 创建一个可视化窗口

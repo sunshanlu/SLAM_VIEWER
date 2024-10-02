@@ -3,3 +3,12 @@ target_link_libraries(point_cloud_example slam_viewer)
 
 add_executable(trajectory_example trajectory_example.cc)
 target_link_libraries(trajectory_example slam_viewer)
+
+add_executable(coordinate_example coordinate_example.cc)
+target_link_libraries(coordinate_example slam_viewer)
+
+add_executable(frame_example frame_example.cc)
+target_link_libraries(frame_example slam_viewer)
+
+add_executable(plotter_example plotter_example.cc)
+target_link_libraries(plotter_example slam_viewer)
