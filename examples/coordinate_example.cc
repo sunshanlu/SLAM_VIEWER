@@ -13,7 +13,13 @@ int main(int argc, char **argv) {
 
     /// 2. 创建一个可视化窗口
     auto viewer = std::make_shared<WindowImpl>();
-    viewer->AddUIItem(coordinate_ui);
+    auto camera = std::make_shared<Camera>("camera");
+    auto view3d = std::make_shared<View3D>("view3d");
+    viewer->AddView(view3d, 0, 1, 0, 1);
+
+    view3d->SetCamera(camera);
+    view3d->AddUIItem(coordinate_ui);
+    
     std::thread viewer_thread(&WindowImpl::Run, viewer);
 
     /// 3. 测试ResetTwi函数

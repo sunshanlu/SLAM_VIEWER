@@ -210,36 +210,54 @@ public:
     CloudUI(Vec3 color = Vec3(0.5, 0.5, 0.5), float line_width = 3.0, float point_size = 1.0)
         : UIItem(color, line_width, point_size) {}
 
-    /// 设置点云信息，位置和颜色
+    /// 设置点云信息，位置和颜色，非渲染线程调用
     template <typename PointType>
     void SetCloud(typename pcl::PointCloud<PointType>::Ptr &cloud, SE3 Twi,
                   typename ColorFactory<PointType>::Ptr color_factory) {
         if (!cloud || cloud->empty())
             return;
 
-        need_update_.store(true);
-        cloud_xyz_.clear();
-        cloud_color_.clear();
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            cloud_xyz_.clear();
+            cloud_color_.clear();
+        }
 
-        cloud_xyz_.resize(cloud->size());
-        std::vector<int> idx(cloud->size());
-        std::iota(idx.begin(), idx.end(), 0); ///< iota从0开始递增
-
-        std::lock_guard<std::mutex> lock(mutex_);
+        this->template AddCloud<PointType>(cloud, Twi, color_factory);
         Twi_ = std::move(Twi);
-        std::for_each(std::execution::par_unseq, idx.begin(), idx.end(), [&](const int &id) {
-            const auto &pt = cloud->points[id];
-            Vec3 pt_world = Twi_ * pt.getVector3fMap();
-            cloud_xyz_[id] = pt_world;
-        });
-
-        color_factory->CreateColor(cloud_xyz_, cloud_color_);
     }
 
-    /// 更新点云的坐标
+    /// 更新点云的坐标，非渲染线程调用
     void ResetTwi(const SE3 &Twi) override;
 
-    /// 更新渲染函数
+    /// 添加点云，非渲染线程调用，进行点云的合并
+    template <typename PointType>
+    void AddCloud(typename pcl::PointCloud<PointType>::Ptr &cloud, SE3 Twi,
+                  typename ColorFactory<PointType>::Ptr color_factory) {
+        if (!cloud || cloud->empty())
+            return;
+
+        std::vector<Vec3> cloud_xyz(cloud->size());
+        std::vector<Vec4> cloud_color(cloud->size());
+
+        std::vector<int> idx(cloud->size());
+        std::iota(idx.begin(), idx.end(), 0);
+
+        std::for_each(std::execution::par_unseq, idx.begin(), idx.end(), [&](const int &id) {
+            const auto &pt = cloud->points[id];
+            Vec3 pt_world = Twi * pt.getVector3fMap();
+            cloud_xyz[id] = pt_world;
+        });
+
+        color_factory->CreateColor(cloud_xyz, cloud_color);
+
+        std::lock_guard<std::mutex> lock(mutex_);
+        cloud_xyz_.insert(cloud_xyz_.end(), cloud_xyz.begin(), cloud_xyz.end());
+        cloud_color_.insert(cloud_color_.end(), cloud_color.begin(), cloud_color.end());
+        need_update_.store(true);
+    }
+
+    /// 更新渲染函数，渲染线程调用
     void Update() override {
         if (need_update_.load()) {
             need_update_.store(false);

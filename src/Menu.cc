@@ -2,17 +2,16 @@
 
 NAMESPACE_BEGIN
 
-Menu::Menu(std::string name, float window_ratio)
-    : name_(std::move(name))
-    , window_ratio_(std::move(window_ratio)) {}
+Menu::Menu(std::string name)
+    : View(std::move(name)) {}
 
 /// 创建Menu的布局，
-void Menu::CreateDisplayLayout() {
-    pangolin::CreatePanel(name_);
+void Menu::CreateDisplayLayout(pangolin::Layout layout) {
+    auto &menu = pangolin::CreatePanel(name_);
 
-    while (!create_queue_.empty()) {
-        auto create_func = create_queue_.front();
-        create_queue_.pop();
+    while (!tasks_queue_.empty()) {
+        auto create_func = tasks_queue_.front();
+        tasks_queue_.pop();
         create_func();
     }
 }
@@ -20,33 +19,33 @@ void Menu::CreateDisplayLayout() {
 /// 添加一个按钮菜单元素
 void Menu::AddButtonItem(std::string name, std::function<void(bool)> callback) {
     auto create_func = [=]() { CreateButtonItem(name, callback); };
-    create_queue_.push(create_func);
+    tasks_queue_.push(create_func);
 }
 
 /// 添加一个checkbox菜单元素
 void Menu::AddCheckBoxItem(std::string name, std::function<void(bool)> callback) {
     auto create_func = [=]() { CreateCheckBoxItem(name, callback); };
-    create_queue_.push(create_func);
+    tasks_queue_.push(create_func);
 }
 
 /// 添加一个整数菜单元素
 void Menu::AddIntItem(std::string name, std::function<void(int)> callback, int min, int max, int default_val) {
     auto create_func = [=]() { CreateIntItem(name, callback, min, max, default_val); };
-    create_queue_.push(create_func);
+    tasks_queue_.push(create_func);
 }
 
 /// 添加一个float菜单元素
 void Menu::AddFloatItem(std::string name, std::function<void(float)> callback, float min, float max, float default_val,
                         bool log_scale) {
     auto create_func = [=]() { CreateFloatItem(name, callback, min, max, default_val, log_scale); };
-    create_queue_.push(create_func);
+    tasks_queue_.push(create_func);
 }
 
 /// 添加一个double菜单元素
 void Menu::AddDoubleItem(std::string name, std::function<void(double)> callback, double min, double max,
                          double default_val, bool log_scale) {
     auto create_func = [=]() { CreateDoubleItem(name, callback, min, max, default_val, log_scale); };
-    create_queue_.push(create_func);
+    tasks_queue_.push(create_func);
 }
 
 /// 创建按钮菜单元素，按下后会自己回弹

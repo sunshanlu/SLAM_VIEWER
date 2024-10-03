@@ -3,7 +3,7 @@
 NAMESPACE_BEGIN
 
 /**
- * @brief ArrowUI的构造函数
+ * @brief ArrowUI的构造函数，非线程安全
  *
  * @param Twi               输入的Arrow在世界坐标系下的位姿
  * @param arrow_length      输入的Arrow的长度
@@ -37,7 +37,7 @@ ArrowUI::ArrowUI(SE3 Twi, float arrow_length, Vec3 color, HeadType head_type, fl
 }
 
 /**
- * @brief 计算头部长度
+ * @brief 计算头部长度，内部使用api
  *
  * @param head_length   输入的未调整的头部长度
  * @return float        输出的调整后的头部长度
@@ -75,29 +75,31 @@ void ArrowUI::Update() {
 }
 
 /**
- * @brief 重置Twi，箭头在世界坐标系下的位姿
+ * @brief 重置Twi，箭头在世界坐标系下的位姿，主线程使用，线程安全，不允许多线程同时调用
  *
  * @param Twi 输入的新的Twi
  */
 void ArrowUI::ResetTwi(const SE3 &Twi) {
     SE3 Tiw_ = Twi_.inverse();
 
-    for (int i = 0; i < points_.size(); i++)
-        points_[i] = Twi * Tiw_ * points_[i];
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (int i = 0; i < points_.size(); i++)
+            points_[i] = Twi * Tiw_ * points_[i];
+    }
 
     Twi_ = Twi;
     need_update_.store(true);
 }
 
 /**
- * @brief 渲染箭头函数
+ * @brief 渲染箭头函数，仅渲染线程使用
  *
  */
 void ArrowUI::Render() {
     if (!IsValid())
         return;
 
-    std::lock_guard<std::mutex> lock(mutex_);
     glColor3f(color_[0], color_[1], color_[2]);
     glLineWidth(line_width_);
     pangolin::RenderVbo(vbo_, GL_LINES);
@@ -119,7 +121,10 @@ void ArrowUI::ResetArrowLength(float arrow_length) {
     Vec3 up_point = Twi_ * Vec3(arrow_length - head_length, y, 0);
     Vec3 down_point = Twi_ * Vec3(arrow_length - head_length, -y, 0);
 
-    points_ = {start_point, end_point, up_point, end_point, down_point, end_point};
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        points_ = {start_point, end_point, up_point, end_point, down_point, end_point};
+    }
 
     need_update_.store(true);
 }

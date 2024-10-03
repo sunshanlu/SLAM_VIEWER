@@ -22,7 +22,7 @@ public:
     /// ui元素的更新函数
     virtual void Update() override;
 
-    /// 重置frameui的世界坐标
+    /// 重置frameui的世界坐标，非渲染线程调用
     virtual void ResetTwi(const SE3 &Twi);
 
 private:

@@ -4,10 +4,36 @@
 #include <pcl/io/impl/pcd_io.hpp>
 
 #include "CloudUI.hpp"
+#include "Menu.hpp"
 #include "PointTypes.h"
+#include "View3D.h"
 #include "WindowImpl.h"
 
 using namespace slam_viewer;
+
+void ConfigMenu(Menu::Ptr menu, Camera::Ptr camera) {
+    assert(menu && camera && "menu or camera is nullptr!");
+
+    /// 4.1 follow 相机跟踪模式
+    menu->AddCheckBoxItem("Follow", [=](bool checked) {
+        if (checked)
+            camera->SetFollow();
+        else
+            camera->SetFree();
+    });
+
+    /// 4.2 设置上帝视角
+    menu->AddButtonItem("God View", [=](bool pushed) {
+        if (pushed)
+            camera->SetModelView(pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisX));
+    });
+
+    /// 4.3 设置前置视角
+    menu->AddButtonItem("Front View", [=](bool pushed) {
+        if (pushed)
+            camera->SetModelView(pangolin::ModelViewLookAt(-50, 0, 10, 0, 0, 0, pangolin::AxisZ));
+    });
+}
 
 int main(int argc, char **argv) {
 
@@ -16,25 +42,25 @@ int main(int argc, char **argv) {
     pcl::PointCloud<PointXYZR>::Ptr cloud_ptr = pcl::make_shared<pcl::PointCloud<PointXYZR>>();
     pcl::io::loadPCDFile<PointXYZR>(pcd_path, *cloud_ptr);
 
-    /// 统计cloud_ptr中的ring信息
-    std::unordered_map<int, int> rings;
-    for (auto &point : cloud_ptr->points) {
-        if (rings.find(point.ring) != rings.end()) {
-            rings[point.ring] += 1;
-        } else
-            rings.insert({point.ring, 1});
-    }
-
     /// 2. 创建一个点云UI
     SE3 Twi;
     CloudUI::Ptr cloud_ui = std::make_shared<CloudUI>();
     ColorFactory<PointXYZR>::Ptr ring_factory = std::make_shared<RingColor<PointXYZR>>(cloud_ptr);
     cloud_ui->SetCloud<PointXYZR>(cloud_ptr, Twi, ring_factory);
 
-    /// 3. 创建一个可视化窗口
+    /// 3. 创建一个可视化窗口和3d可视化和菜单可视化
     auto viewer = std::make_shared<WindowImpl>();
-    viewer->AddUIItem(cloud_ui);
-    viewer->AddMenuShow();
+    auto camera = std::make_shared<Camera>("3d_view_camera", cloud_ui);
+    auto view3d = std::make_shared<View3D>("3d_view");
+    auto menu = std::make_shared<Menu>("menu");
+
+    view3d->AddUIItem(cloud_ui);
+    view3d->SetCamera(camera);
+    viewer->AddView(view3d, 0, 1, 0.2, 1);
+    viewer->AddView(menu, 0, 1, 0, 0.2);
+
+    /// 4. 对菜单进行配置
+    ConfigMenu(menu, camera);
 
     std::thread viewer_thread(&WindowImpl::Run, viewer);
 

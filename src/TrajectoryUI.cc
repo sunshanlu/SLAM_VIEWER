@@ -41,12 +41,14 @@ TrajectoryUI::TrajectoryUI(Vec3 color, float line_width, float point_size, std::
  * @param pt 输入的轨迹点
  */
 void TrajectoryUI::AddPt(const Vec3 &pt) {
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (poses_.size() >= max_capicity_)
+            poses_.erase(poses_.begin(), poses_.end() + 2e7);
+
+        poses_.push_back(pt);
+    }
     need_update_.store(true);
-
-    if (poses_.size() >= max_capicity_)
-        poses_.erase(poses_.begin(), poses_.end() + 2e7);
-
-    poses_.push_back(pt);
 }
 
 /**
@@ -57,8 +59,10 @@ void TrajectoryUI::Update() {
     if (!need_update_.load())
         return;
 
-    std::lock_guard<std::mutex> lock(mutex_);
-    vbo_ = pangolin::GlBuffer(pangolin::GlArrayBuffer, poses_);
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        vbo_ = pangolin::GlBuffer(pangolin::GlArrayBuffer, poses_);
+    }
     need_update_.store(false);
 }
 
@@ -67,13 +71,13 @@ void TrajectoryUI::Update() {
  *
  */
 void TrajectoryUI::Clear() {
-    poses_.clear();
-    poses_.reserve(max_capicity_);
-
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        vbo_.Free();
+        poses_.clear();
+        poses_.reserve(max_capicity_);
     }
+
+    vbo_.Free();
 }
 
 /**
@@ -87,9 +91,8 @@ void TrajectoryUI::ResetTwi(const SE3 &Twi) {
     for (int i = 0; i < poses_.size(); ++i)
         poses[i] = Twi * Tiw_ * poses_[i];
 
-    std::swap(poses, poses_);
-
     std::lock_guard<std::mutex> lock(mutex_);
+    std::swap(poses, poses_);
     Twi_ = Twi;
 
     need_update_.store(true);

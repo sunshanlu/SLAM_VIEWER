@@ -23,10 +23,13 @@ public:
             float head_length_ratio = 0.2, float head_max_length = 2.0, float head_fixed_length = 0.5,
             float line_width = 8.0);
 
-    /// 箭头的清除函数
+    /// 箭头的清除函数，线程安全
     virtual void Clear() override {
         UIItem::Clear();
-        points_.clear();
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            points_.clear();
+        }
     }
 
     /// ui元素的更新函数
@@ -38,7 +41,7 @@ public:
     /// 渲染函数
     virtual void Render() override;
 
-    /// 重置箭头长度
+    /// 重置箭头长度，主线程调用
     void ResetArrowLength(float arrow_length);
 
 private:

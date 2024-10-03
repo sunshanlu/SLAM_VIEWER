@@ -66,12 +66,9 @@ void CloudUI::Render() {
     if (!IsValid())
         return;
 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        glPointSize(point_size_);
-        pangolin::RenderVboCbo(vbo_, cbo_);
-        glPointSize(1.0);
-    }
+    glPointSize(point_size_);
+    pangolin::RenderVboCbo(vbo_, cbo_);
+    glPointSize(1.0);
 }
 
 /**
@@ -79,9 +76,9 @@ void CloudUI::Render() {
  *
  */
 void CloudUI::Clear() {
-    std::lock_guard<std::mutex> lock(mutex_);
     vbo_.Free();
     cbo_.Free();
+    std::lock_guard<std::mutex> lock(mutex_);
     cloud_xyz_.clear();
     cloud_color_.clear();
 }
@@ -102,6 +99,7 @@ void CloudUI::ResetTwi(const SE3 &Twi) {
         cloud_xyz[i] = Twi * Tiw_ * pw;
     }
 
+    std::lock_guard<std::mutex> lock(mutex_);
     std::swap(cloud_xyz_, cloud_xyz);
     Twi_ = Twi;
 }

@@ -49,7 +49,7 @@ Camera::Camera(std::string name, SE3 Twi, bool fixed, float render_width, float 
  */
 Camera::Camera(std::string name, UIItem::Ptr follow_item, float render_width, float render_height, float focus_x,
                float focus_y, float camera_znear, float camera_zfar)
-    : follow_item_(std::move(follow_item_))
+    : follow_item_(std::move(follow_item))
     , camera_name_(std::move(name))
     , last_render_height_(render_height)
     , last_render_width_(render_width)
@@ -77,7 +77,7 @@ void Camera::SetFollow(UIItem::Ptr follow_item) {
 }
 
 /**
- * @brief 设置相机的固定位姿，其他线程调用api
+ * @brief 设置相机的固定位姿，其他线程调用api，线程安全
  *
  * @param Twi 输入的固定位姿
  */
@@ -88,8 +88,8 @@ void Camera::SetFixedPose(SE3 Twi) {
 }
 
 /**
- * @brief 设置位自由相机，可用鼠标控制相机位姿
- *
+ * @brief 设置为自由相机，可用鼠标控制相机位姿，线程安全
+ * 
  */
 void Camera::SetFree() {
     std::lock_guard<std::mutex> lock(render_pose_mutex_);

@@ -40,18 +40,20 @@ int main(int argc, char **argv) {
 
     /// 2. 创建一个可视化窗口
     auto viewer = std::make_shared<WindowImpl>();
-    viewer->AddPlotterShow("ODOM", {"left_pulse", "right_pulse"});
-    viewer->AddPlotterShow("GNSS", {"latitude", "longitude", "height", "angle"});
-    viewer->AddPlotterShow("IMU", {"gyro_x", "gyro_y", "gyro_z", "acc_x", "acc_y", "acc_z"});
+    auto plotter = std::make_shared<Plotter>("plotter");
+    viewer->AddView(plotter, 0, 1, 0, 1);
+    plotter->AddPlotterItem("ODOM", {"left_pulse", "right_pulse"});
+    plotter->AddPlotterItem("GNSS", {"latitude", "longitude", "height", "angle"});
+    plotter->AddPlotterItem("IMU", {"gyro_x", "gyro_y", "gyro_z", "acc_x", "acc_y", "acc_z"});
 
     std::thread viewer_thread(&WindowImpl::Run, viewer);
 
     /// 测试AddPt函数
     int odom_id = 0, gnss_id = 0, imu_id = 0;
     while (odom_id < odom_data.size() && gnss_id < gnss_data.size() && imu_id < imu_data.size()) {
-        viewer->UpdatePlotters("ODOM", odom_data[odom_id++]);
-        viewer->UpdatePlotters("GNSS", gnss_data[gnss_id++]);
-        viewer->UpdatePlotters("IMU", imu_data[imu_id]);
+        plotter->UpdatePlotterItem("ODOM", odom_data[odom_id++]);
+        plotter->UpdatePlotterItem("GNSS", gnss_data[gnss_id++]);
+        plotter->UpdatePlotterItem("IMU", imu_data[imu_id]);
         imu_id += 10;
         std::this_thread::sleep_for(10ms);
     }

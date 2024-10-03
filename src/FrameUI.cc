@@ -29,9 +29,12 @@ void FrameUI::Render() {
     }
 }
 
-/// 清理函数
+/// 清理函数，线程安全
 void FrameUI::Clear() {
-    points_.clear();
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        points_.clear();
+    }
     origin_points_.clear();
     UIItem::Clear();
 }
@@ -50,8 +53,12 @@ void FrameUI::Update() {
 void FrameUI::ResetTwi(const SE3 &Twi) {
     SE3 Tiw_ = Twi_.inverse();
 
-    for (int i = 0; i < points_.size(); i++)
-        points_[i] = Twi * origin_points_[i];
+    decltype(points_) points;
+    for (int i = 0; i < points.size(); i++)
+        points[i] = Twi * origin_points_[i];
+    
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::swap(points_, points);
 
     Twi_ = Twi;
     need_update_.store(true);

@@ -5,7 +5,7 @@
 NAMESPACE_BEGIN
 
 /// 菜单类
-class Menu {
+class Menu : public View {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     typedef std::shared_ptr<Menu> Ptr;
@@ -29,14 +29,13 @@ public:
     typedef std::vector<MenuItem<float>::Ptr> FloatItems;
     typedef std::vector<MenuItem<double>::Ptr> DoubleItems;
     typedef std::vector<MenuItem<std::string>::Ptr> StrItems;
-    typedef std::queue<std::function<void(void)>> CreateQueue;
 
-    Menu(std::string name, float window_ratio = 0.2);
+    Menu(std::string name);
 
     /// 创建Menu的布局，
-    void CreateDisplayLayout();
+    void CreateDisplayLayout(pangolin::Layout layout = pangolin::LayoutEqualVertical) override;
 
-    /// 添加一个按钮菜单元素
+    /// 添加一个按钮菜单元素，在渲染线程启动之前的初始化阶段使用
     void AddButtonItem(std::string name, std::function<void(bool)> callback);
 
     /// 添加一个checkbox菜单元素
@@ -69,11 +68,8 @@ public:
             item->callback_();
     }
 
-    /// 设置Menu的位置
-    void SetBounds(pangolin::Attach bottom, pangolin::Attach top, pangolin::Attach left, pangolin::Attach right) {
-        auto &menu = pangolin::Display(name_);
-        menu.SetBounds(bottom, top, left, right);
-    }
+    /// 菜单自动渲染，无需额外的代码
+    void Render() override { Update(); }
 
 private:
     /// 创建按钮菜单元素，按下后会自己回弹
@@ -94,13 +90,10 @@ private:
     void CreateDoubleItem(std::string name, std::function<void(double)> callback, double min = 0.f, double max = 10.f,
                           double default_val = 5.f, bool log_scale = false);
 
-    std::string name_;         ///< 菜单名称
-    float window_ratio_;       ///< 菜单占窗口比例
     BoolItems bool_items_;     ///< button 类型菜单元素
     IntItems int_items_;       ///< int 类型菜单元素
     FloatItems float_items_;   ///< float 类型菜单元素
     DoubleItems double_items_; ///< double 类型菜单元素
-    CreateQueue create_queue_; ///< 创建菜单元素队列
 };
 
 NAMESPACE_END

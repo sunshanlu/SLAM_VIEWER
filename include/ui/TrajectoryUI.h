@@ -21,10 +21,10 @@ public:
     /// 渲染函数
     void Render() override;
 
-    /// 向轨迹中添加点
+    /// 向轨迹中添加点，非渲染线程调用
     void AddPt(const Vec3 &pt);
 
-    /// 相轨迹中添加位姿
+    /// 相轨迹中添加位姿，非渲染线程调用
     void AddPt(const SE3 &Twi) { AddPt(Twi.translation()); }
 
     /// 更新函数
@@ -33,7 +33,7 @@ public:
     /// 清空选项
     void Clear() override;
 
-    /// 重置Twi位姿
+    /// 重置Twi位姿，非渲染线程调用
     void ResetTwi(const SE3 &Twi) override;
 
 private:

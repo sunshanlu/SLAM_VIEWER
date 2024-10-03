@@ -30,6 +30,7 @@ public:
     /// 设置相机跟踪元素，其他线程调用api
     void SetFollow(UIItem::Ptr follow_item);
 
+    /// 设置相机跟踪，若缓存的跟踪元素为nullptr，设置失败
     void SetFollow() {
         if (follow_item_)
             SetFollow(follow_item_);
@@ -38,6 +39,7 @@ public:
     /// 获取相机的渲染状态，仅渲染线程可用
     const pangolin::OpenGlRenderState &RenderState() const { return render_state_; }
 
+    /// 获取相机的渲染状态，仅渲染线程可用
     pangolin::OpenGlRenderState &RenderState() { return render_state_; }
 
     /// 设置相机的固定位姿，其他线程调用api
@@ -46,7 +48,7 @@ public:
     /// 设置位自由相机，可用鼠标控制相机位姿，其他线程调用api
     void SetFree();
 
-    /// 绑定到View，仅渲染线程调用
+    /// 绑定到View，在View3D::SetCamera中使用
     void BindDisplay(std::string display_name) { bind_display_name_ = std::move(display_name); }
 
     /// 更新相机的跟踪状态，仅渲染线程中调用
@@ -56,7 +58,7 @@ public:
     void SetModelView(pangolin::OpenGlMatrix model_view) { render_state_.SetModelViewMatrix(std::move(model_view)); }
 
 private:
-    /// 创建渲染状态，仅渲染线程可用
+    /// 创建渲染状态，初始化过程使用，非线程安全
     void CreateRenderState() {
         /// 视图矩阵，即Tic，i代表被观测者，c代表相机，即确定了相机在被观测坐标系下的相对位姿
         auto model_view = pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisX);
@@ -66,7 +68,7 @@ private:
         render_state_.SetModelViewMatrix(model_view);
     }
 
-    /// 当绑定View发生变化时，保证相机渲染不会产生缩放
+    /// 当绑定View发生变化时，保证相机渲染不会产生缩放，仅允许渲染线程使用
     void Keep3dScale();
 
     UIItem::Ptr follow_item_;                  ///< 相机跟踪的可视化元素

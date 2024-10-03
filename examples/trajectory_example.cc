@@ -13,7 +13,7 @@ using namespace slam_viewer;
 
 int main(int argc, char **argv) {
 
-    /// 1. 读取点云数据
+    /// 1. 读取轨迹数据
     std::string trajectory_path = argv[1];
     std::ifstream fin(trajectory_path);
     std::string line_str;
@@ -35,7 +35,11 @@ int main(int argc, char **argv) {
 
     /// 3. 创建一个可视化窗口
     auto viewer = std::make_shared<WindowImpl>();
-    viewer->AddUIItem(trajectory_ui);
+    auto view3d = std::make_shared<View3D>("view 3d");
+    auto camera = std::make_shared<Camera>("camera");
+    view3d->AddUIItem(trajectory_ui);
+    view3d->SetCamera(camera);
+    viewer->AddView(view3d, 0, 1, 0, 1);
 
     std::thread viewer_thread(&WindowImpl::Run, viewer);
 
@@ -49,7 +53,7 @@ int main(int argc, char **argv) {
     SE3 Twi;
     /// 测试ResetTwi函数
     for (int i = 0; i < 1000; ++i) {
-        Twi.translation().x() += 1;
+        Twi.translation().x() += 0.1;
         trajectory_ui->ResetTwi(Twi);
 
         std::this_thread::sleep_for(100ms);

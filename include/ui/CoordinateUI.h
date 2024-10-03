@@ -14,8 +14,11 @@ public:
 
     CoordinateUI(float arrow_length, SE3 Twi = SE3());
     
-    /// 重置坐标轴变换
+    /// 重置坐标轴变换，非渲染线程调用
     void ResetTwi(const SE3 &Twi) override;
+
+    /// 重置坐标轴长度，非渲染线程调用
+    void ResetLength(float arrow_length);
     
     /// 更新
     void Update() override;

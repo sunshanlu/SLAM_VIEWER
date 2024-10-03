@@ -4,9 +4,9 @@
 #include <deque>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <unordered_map>
 #include <vector>
-#include <queue>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -26,6 +26,7 @@ NAMESPACE_BEGIN
 
 typedef Eigen::Vector3f Vec3;
 typedef Eigen::Vector4f Vec4;
+typedef Eigen::Vector2f Vec2;
 typedef Sophus::SE3f SE3;
 typedef Sophus::SO3f SO3;
 
@@ -52,7 +53,7 @@ public:
 
     /// 重置item的世界坐标
     virtual void ResetTwi(const SE3 &Twi);
-    
+
     /// 获取item的世界位姿
     SE3 GetTwi() const { return Twi_; }
 
@@ -66,6 +67,43 @@ protected:
     float point_size_;              ///< 涉及到的点大小
     Vec3 color_;                    ///< 颜色
     std::atomic<bool> need_update_; ///< 是否需要更新
+};
+
+/// 可视基类，一个窗口内有很多View
+class View {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    typedef std::shared_ptr<View> Ptr;
+    typedef std::shared_ptr<const View> ConstPtr;
+    typedef std::queue<std::function<void(void)>> TaskQueue;
+
+    View(std::string name)
+        : name_(name) {}
+
+    /// 设置View边界，用于布局使用
+    void SetBounds(pangolin::Attach bottom, pangolin::Attach top, pangolin::Attach left, pangolin::Attach right) {
+        auto &view = pangolin::Display(name_);
+        view.SetBounds(bottom, top, left, right);
+    }
+
+    /// 创建View布局
+    virtual void CreateDisplayLayout(pangolin::Layout layout = pangolin::LayoutEqualVertical) {
+        auto &view = pangolin::Display(name_);
+        view.SetLayout(layout);
+
+        while (!tasks_queue_.empty()) {
+            auto task = tasks_queue_.front();
+            tasks_queue_.pop();
+            task();
+        }
+    }
+
+    /// View的渲染函数，需要再Update之后调用
+    virtual void Render() = 0;
+
+protected:
+    std::string name_;      ///< View名称，用于找到pangolin对应的渲染对象
+    TaskQueue tasks_queue_; ///< 任务队列
 };
 
 NAMESPACE_END

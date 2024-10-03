@@ -12,3 +12,9 @@ target_link_libraries(frame_example slam_viewer)
 
 add_executable(plotter_example plotter_example.cc)
 target_link_libraries(plotter_example slam_viewer)
+
+add_executable(image_shower_example image_shower_example.cc)
+target_link_libraries(image_shower_example slam_viewer)
+
+add_executable(text_test text_test.cc)
+target_link_libraries(text_test slam_viewer)

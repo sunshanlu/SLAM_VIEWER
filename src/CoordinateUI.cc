@@ -29,7 +29,22 @@ CoordinateUI::CoordinateUI(float arrow_length, SE3 Twi)
 }
 
 /**
- * @brief 重置坐标系的位姿
+ * @brief 重置坐标轴的长度，非渲染线程调用
+ *
+ * @param arrow_length 输入的新的坐标轴长度
+ */
+void CoordinateUI::ResetLength(float arrow_length){
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    x_axis_->ResetArrowLength(arrow_length);
+    y_axis_->ResetArrowLength(arrow_length);
+    z_axis_->ResetArrowLength(arrow_length);
+
+    need_update_.store(true);
+}
+
+/**
+ * @brief 重置坐标系的位姿，非渲染线程调用
  *
  * @param Twi 输入的新的坐标系位姿
  */
@@ -37,9 +52,13 @@ void CoordinateUI::ResetTwi(const SE3 &Twi) {
     SE3 Twi_x = Twi;
     SE3 Twi_y = Twi_x * z_rot_;
     SE3 Twi_z = Twi_x * y_rot_.inverse();
-    x_axis_->ResetTwi(Twi_x);
-    y_axis_->ResetTwi(Twi_y);
-    z_axis_->ResetTwi(Twi_z);
+
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        x_axis_->ResetTwi(Twi_x);
+        y_axis_->ResetTwi(Twi_y);
+        z_axis_->ResetTwi(Twi_z);
+    }
 
     Twi_ = Twi;
     need_update_.store(true);
