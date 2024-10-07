@@ -1,6 +1,6 @@
 #include "WindowImpl.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief WindowImpl的有参和默认构造函数
@@ -80,4 +80,4 @@ void WindowImpl::Render() {
         views_[i]->Render();
 }
 
-NAMESPACE_END
+}

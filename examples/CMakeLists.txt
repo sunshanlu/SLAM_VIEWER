@@ -16,5 +16,14 @@ target_link_libraries(plotter_example slam_viewer)
 add_executable(image_shower_example image_shower_example.cc)
 target_link_libraries(image_shower_example slam_viewer)
 
-add_executable(text_test text_test.cc)
-target_link_libraries(text_test slam_viewer)
+add_executable(box_example box_example.cc)
+target_link_libraries(box_example slam_viewer)
+
+add_executable(kitti_dataset_example kitti_dataset_example.cc KittiHelper/KittiHelper.cc)
+target_link_libraries(kitti_dataset_example slam_viewer)
+target_include_directories(kitti_dataset_example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/KittiHelper)
+
+
+
+# add_executable(text_test text_test.cc)
+# target_link_libraries(text_test slam_viewer)

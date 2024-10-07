@@ -1,6 +1,6 @@
 #include "Menu.hpp"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 Menu::Menu(std::string name)
     : View(std::move(name)) {}
@@ -92,4 +92,4 @@ void Menu::CreateDoubleItem(std::string name, std::function<void(double)> callba
     double_items_.push_back(double_item);
 }
 
-NAMESPACE_END
+}

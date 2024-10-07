@@ -1,6 +1,6 @@
 #include "CoordinateUI.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief 坐标系的构造函数
@@ -105,4 +105,4 @@ void CoordinateUI::Render() {
     z_axis_->Render();
 }
 
-NAMESPACE_END
+}

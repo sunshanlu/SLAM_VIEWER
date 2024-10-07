@@ -4,6 +4,8 @@ project(slam_viewer)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Release)
+set(BUILD_EXAMPLES ON)
 
 find_package(Pangolin REQUIRED)
 find_package(Sophus REQUIRED)
@@ -17,8 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/ui
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/core 
-    /usr/include/eigen3
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/core /usr/include/eigen3
     ${PCL_INCLUDE_DIRS})
 
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
@@ -27,4 +28,6 @@ add_library(slam_viewer SHARED ${SRC_FILES})
 target_link_libraries(slam_viewer ${Pangolin_LIBRARY} ${PCL_LIBRARIES}
                       Sophus::Sophus TBB::tbb ${OpenCV_LIBS})
 
-add_subdirectory(examples)
+if(${BUILD_EXAMPLES})
+    add_subdirectory(examples)
+endif()

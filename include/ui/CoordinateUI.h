@@ -3,7 +3,7 @@
 #include "ArrowUI.h"
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 class CoordinateUI : public UIItem {
 public:
@@ -45,4 +45,4 @@ private:
     SE3 x_rot_, y_rot_, z_rot_; ///< 沿着轴旋转的旋转矩阵
 };
 
-NAMESPACE_END
+}

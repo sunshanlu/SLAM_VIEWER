@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /// @brief 绘制直线箭头
 class ArrowUI : public UIItem {
@@ -58,4 +58,4 @@ private:
     float tan15_;             ///< 15度正切值
 };
 
-NAMESPACE_END
+}

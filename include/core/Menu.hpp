@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /// 菜单类
 class Menu : public View {
@@ -96,4 +96,4 @@ private:
     DoubleItems double_items_; ///< double 类型菜单元素
 };
 
-NAMESPACE_END
+}

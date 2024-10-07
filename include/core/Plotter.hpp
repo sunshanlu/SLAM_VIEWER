@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 class Plotter : public View {
 public:
@@ -71,4 +71,4 @@ private:
     std::unordered_map<std::string, PlotterItem::Ptr> plotter_items_; ///< 绘图元素
 };
 
-NAMESPACE_END
+}

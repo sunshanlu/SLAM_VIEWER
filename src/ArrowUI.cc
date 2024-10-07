@@ -1,6 +1,6 @@
 #include "ArrowUI.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief ArrowUI的构造函数，非线程安全
@@ -129,4 +129,4 @@ void ArrowUI::ResetArrowLength(float arrow_length) {
     need_update_.store(true);
 }
 
-NAMESPACE_END
+}

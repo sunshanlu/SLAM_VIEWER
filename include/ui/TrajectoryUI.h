@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 class TrajectoryUI : public UIItem {
     friend class UIItem;
@@ -41,4 +41,4 @@ private:
     std::vector<Vec3> poses_;  ///< 轨迹点集
 };
 
-NAMESPACE_END
+}

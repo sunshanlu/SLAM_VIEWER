@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /// 渲染3d窗口
 class View3D : public View {
@@ -36,4 +36,4 @@ private:
     std::mutex mutex_;                  ///< 维护ui_items_的互斥量
 };
 
-NAMESPACE_END
+}

@@ -1,6 +1,6 @@
 #include "View3D.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief View3D空间渲染函数
@@ -56,4 +56,4 @@ void View3D::SetCamera(Camera::Ptr camera) {
     camera_->BindDisplay(name_);
 }
 
-NAMESPACE_END
+}

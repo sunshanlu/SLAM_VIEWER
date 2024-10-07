@@ -1,6 +1,6 @@
 #include "TrajectoryUI.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 void TrajectoryUI::Render() {
     if (!IsValid())
@@ -98,4 +98,4 @@ void TrajectoryUI::ResetTwi(const SE3 &Twi) {
     need_update_.store(true);
 }
 
-NAMESPACE_END
+}

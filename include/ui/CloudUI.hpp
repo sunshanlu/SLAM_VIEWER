@@ -5,7 +5,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 extern std::vector<Vec4, Eigen::aligned_allocator<Vec4>> intensity_table_; ///< 颜色表
 extern std::vector<Vec4, Eigen::aligned_allocator<Vec4>> contrast_table_;  ///< 对比色表
@@ -287,4 +287,4 @@ private:
     std::vector<Vec4> cloud_color_; ///< 点云颜色信息
 };
 
-NAMESPACE_END
+}

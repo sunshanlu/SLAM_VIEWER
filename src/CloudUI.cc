@@ -1,6 +1,6 @@
 #include "CloudUI.hpp"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 std::vector<Vec4, Eigen::aligned_allocator<Vec4>> intensity_table_; ///< 颜色表
 bool intensity_table_init_;                                         ///< 颜色表是否初始化
@@ -104,4 +104,4 @@ void CloudUI::ResetTwi(const SE3 &Twi) {
     Twi_ = Twi;
 }
 
-NAMESPACE_END
+}

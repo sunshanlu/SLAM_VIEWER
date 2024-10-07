@@ -1,6 +1,6 @@
 #include "FrameUI.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 FrameUI::FrameUI(SE3 Twi, Vec3 color, float line_width, float width, float height, float depth)
     : UIItem(color, line_width, 1.0, Twi) {
@@ -64,4 +64,4 @@ void FrameUI::ResetTwi(const SE3 &Twi) {
     need_update_.store(true);
 }
 
-NAMESPACE_END
+}

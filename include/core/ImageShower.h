@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /// @brief 图像显示器
 class ImageShower : public View {
@@ -48,4 +48,4 @@ private:
     int row_offset_, col_offset_;                        ///< 行和列之间间隔
 };
 
-NAMESPACE_END
+}

@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 class FrameUI : public UIItem {
 public:
@@ -30,4 +30,4 @@ private:
     std::vector<Vec3> origin_points_; ///< 自身坐标系下的坐标点
 };
 
-NAMESPACE_END
+}

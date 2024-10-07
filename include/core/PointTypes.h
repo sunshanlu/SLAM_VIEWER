@@ -8,7 +8,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 typedef pcl::PointXYZ PointXYZ;
 typedef pcl::PointXYZI PointXYZI;
@@ -48,7 +48,7 @@ struct PointXYZRT {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
-NAMESPACE_END
+}
 
 // clang-format off
 POINT_CLOUD_REGISTER_POINT_STRUCT(slam_viewer::PointXYZR,

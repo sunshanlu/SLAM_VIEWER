@@ -1,6 +1,6 @@
 #include "ImageShower.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief 图像可视化器的构造函数
@@ -166,4 +166,4 @@ void ImageShower::Render() {
     cv::imshow(name_, render_image_);
 }
 
-NAMESPACE_END
+}

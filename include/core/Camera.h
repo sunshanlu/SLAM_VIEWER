@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 class Camera {
 public:
@@ -61,7 +61,7 @@ private:
     /// 创建渲染状态，初始化过程使用，非线程安全
     void CreateRenderState() {
         /// 视图矩阵，即Tic，i代表被观测者，c代表相机，即确定了相机在被观测坐标系下的相对位姿
-        auto model_view = pangolin::ModelViewLookAt(0, 0, 1000, 0, 0, 0, pangolin::AxisX);
+        auto model_view = pangolin::ModelViewLookAt(0, 0, 300, 0, 0, 0, pangolin::AxisX);
         auto proj = pangolin::ProjectionMatrix(last_render_width_, last_render_height_, camera_focus_x_,
                                                camera_focus_y_, 0.5 * last_render_width_, 0.5 * last_render_height_,
                                                camera_znear_, camera_zfar_);
@@ -87,4 +87,4 @@ private:
     float camera_zfar_;        ///< 相机渲染的z方向上的最远距离
 };
 
-NAMESPACE_END
+}

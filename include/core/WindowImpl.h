@@ -4,7 +4,7 @@
 #include "Plotter.hpp"
 #include "View3D.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 class WindowImpl {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -41,4 +41,4 @@ private:
     std::mutex image_mutex_;                          ///< 图像锁
 };
 
-NAMESPACE_END
+}

@@ -1,6 +1,6 @@
 #include "Common.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief UIItem的自身坐标系和世界坐标系相同的构造函数
@@ -47,4 +47,4 @@ void UIItem::ResetTwi(const SE3 &Twi) {
     Twi_ = Twi;
 }
 
-NAMESPACE_END
+}

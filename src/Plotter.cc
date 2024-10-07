@@ -1,6 +1,6 @@
 #include "Plotter.hpp"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /// 添加一个绘图元素
 void Plotter::AddPlotterItem(std::string plot_name, std::vector<std::string> labels, float x_min, float x_max,
@@ -53,4 +53,4 @@ void Plotter::PlotterItem::Update(const std::vector<float> &data) {
     logger_->Log(data);
 }
 
-NAMESPACE_END
+}

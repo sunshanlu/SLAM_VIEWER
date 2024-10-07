@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-NAMESPACE_BEGIN
+namespace slam_viewer{
 
 /**
  * @brief 自由相机和固定相机构造函数
@@ -68,12 +68,13 @@ Camera::Camera(std::string name, UIItem::Ptr follow_item, float render_width, fl
  * @param follow_item 输入的跟踪元素
  */
 void Camera::SetFollow(UIItem::Ptr follow_item) {
-    if (!follow_item_)
+    if (!follow_item)
         throw std::runtime_error("follow item is nullptr");
 
     std::lock_guard<std::mutex> lock(render_pose_mutex_);
     camera_state_ = CameraState::FollowCamera;
     follow_item_ = std::move(follow_item);
+    render_state_.Follow(follow_item_->GetTwi().matrix());
 }
 
 /**
@@ -85,6 +86,7 @@ void Camera::SetFixedPose(SE3 Twi) {
     std::lock_guard<std::mutex> lock(render_pose_mutex_);
     camera_state_ = CameraState::FixedCamera;
     camera_fixed_Twi_ = std::move(Twi);
+    render_state_.Follow(camera_fixed_Twi_.matrix());
 }
 
 /**
@@ -137,4 +139,4 @@ void Camera::Keep3dScale() {
     }
 }
 
-NAMESPACE_END
+}

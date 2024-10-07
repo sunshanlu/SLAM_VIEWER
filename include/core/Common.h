@@ -18,11 +18,7 @@
 
 using namespace std::chrono_literals;
 
-#define NAMESPACE_BEGIN namespace slam_viewer {
-
-#define NAMESPACE_END }
-
-NAMESPACE_BEGIN
+namespace slam_viewer {
 
 typedef Eigen::Vector3f Vec3;
 typedef Eigen::Vector4f Vec4;
@@ -32,6 +28,7 @@ typedef Sophus::SO3f SO3;
 
 class UIItem {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     typedef std::shared_ptr<UIItem> Ptr;
     typedef std::shared_ptr<const UIItem> ConstPtr;
 
@@ -106,4 +103,4 @@ protected:
     TaskQueue tasks_queue_; ///< 任务队列
 };
 
-NAMESPACE_END
+} // namespace slam_viewer
