@@ -62,6 +62,11 @@ PointCloudXYZRT::Ptr FuseRingClouds(std::vector<PointCloudXYZRT::Ptr> &clouds) {
 
 int main(int argc, char **argv) {
 
+    if (argc != 3) {
+        std::cout << "Usage: ./bin/kitti_viewer <dataset_path> <sequence>" << std::endl;
+        return -1;
+    }
+
     /// 1. 定义相机坐标系和雷达坐标系初始位姿
     Mat3 Rlc;
     Rlc << 0, 0, 1, -1, 0, 0, 0, -1, 0;
@@ -74,7 +79,7 @@ int main(int argc, char **argv) {
     SE3 Twc0 = Twl0 * Tlc;
 
     /// 2. 创建KITTI数据加载器
-    KittiHelper::Options kitti_options = {"/media/rookie-lu/新加卷/Dataset/KITTI", "00", SE3(Rlc, tlc)};
+    KittiHelper::Options kitti_options = {argv[1], argv[2], SE3(Rlc, tlc)};
     KittiHelper kitti_helper(kitti_options);
 
     /// 3. 创建可视化窗口和三个坐标系，world camera lidar 坐标系 和雷达轨迹

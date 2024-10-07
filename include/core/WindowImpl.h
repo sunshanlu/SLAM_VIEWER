@@ -4,7 +4,7 @@
 #include "Plotter.hpp"
 #include "View3D.h"
 
-namespace slam_viewer{
+namespace slam_viewer {
 class WindowImpl {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -24,6 +24,9 @@ public:
     /// 添加渲染View
     void AddView(View::Ptr view, pangolin::Attach bottom, pangolin::Attach top, pangolin::Attach left,
                  pangolin::Attach right, pangolin::Layout layout = pangolin::LayoutEqualVertical);
+    
+    /// 外部线程请求停止
+    void RequestStop() { request_stop_ = true; }
 
 private:
     /// 创建展示布局
@@ -41,4 +44,4 @@ private:
     std::mutex image_mutex_;                          ///< 图像锁
 };
 
-}
+} // namespace slam_viewer
