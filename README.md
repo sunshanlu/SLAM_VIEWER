@@ -6,7 +6,11 @@
 
 # 1.介绍
 
-
+<div align="center">
+	<a href="https://www.bilibili.com/video/BV1WN2EYLEJW/" title="bilibili:SLAM_VIEWER">
+		<img src="https://raw.githubusercontent.com/sunshanlu/slam_viewer/devel/SLAM_Viewer.jpg" alt="ORB_SLAM2_ROS2" width=600>
+	</a>
+</div>
 
 基于pangolin，提供常规的slam可视化api，具体的使用示例可参考examples文件夹下的相关内容。使用slam_viewer非常方便，代码涉及到的流程主要有：
 
