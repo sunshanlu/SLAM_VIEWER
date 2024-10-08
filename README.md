@@ -8,7 +8,7 @@
 
 <div align="center">
 	<a href="https://www.bilibili.com/video/BV1WN2EYLEJW/" title="bilibili:SLAM_VIEWER">
-		<img src="https://raw.githubusercontent.com/sunshanlu/slam_viewer/devel/SLAM_Viewer.jpg" alt="ORB_SLAM2_ROS2" width=600>
+		<img src="https://raw.githubusercontent.com/sunshanlu/slam_viewer/refs/heads/devel/SLAM_Viewer.jpg" alt="SLAM_Viewer" width=600>
 	</a>
 </div>
 
