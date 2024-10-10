@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ArrowUI.h"
-#include "Common.h"
+#include "slam_viewer/ui/ArrowUI.h"
+#include "slam_viewer/core/Common.h"
 
 namespace slam_viewer{
 

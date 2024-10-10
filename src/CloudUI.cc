@@ -1,4 +1,4 @@
-#include "CloudUI.hpp"
+#include "slam_viewer/ui/CloudUI.hpp"
 
 namespace slam_viewer{
 

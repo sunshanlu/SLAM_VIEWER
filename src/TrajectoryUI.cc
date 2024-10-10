@@ -1,4 +1,4 @@
-#include "TrajectoryUI.h"
+#include "slam_viewer/ui/TrajectoryUI.h"
 
 namespace slam_viewer{
 

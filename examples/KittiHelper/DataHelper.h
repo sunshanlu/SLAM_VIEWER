@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include "Common.h"
-#include "PointTypes.h"
+#include "slam_viewer/core/Common.h"
+#include "slam_viewer/core/PointTypes.h"
 
 #define rad2deg ((180.0) / (M_PI));
 #define deg2rad ((M_PI) / (180.0));

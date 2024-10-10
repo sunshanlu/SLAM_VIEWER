@@ -6,7 +6,7 @@
 #include <pcl/point_traits.h>
 #include <pcl/register_point_struct.h>
 
-#include "Common.h"
+#include "slam_viewer/core/Common.h"
 
 namespace slam_viewer{
 

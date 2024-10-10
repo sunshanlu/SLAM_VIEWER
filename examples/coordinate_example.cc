@@ -1,5 +1,5 @@
-#include "CoordinateUI.h"
-#include "WindowImpl.h"
+#include "slam_viewer/ui/CoordinateUI.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

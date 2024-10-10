@@ -3,11 +3,11 @@
 
 #include <pcl/io/impl/pcd_io.hpp>
 
-#include "CloudUI.hpp"
-#include "Menu.hpp"
-#include "PointTypes.h"
-#include "View3D.h"
-#include "WindowImpl.h"
+#include "slam_viewer/ui/CloudUI.hpp"
+#include "slam_viewer/core/Menu.hpp"
+#include "slam_viewer/core/PointTypes.h"
+#include "slam_viewer/core/View3D.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

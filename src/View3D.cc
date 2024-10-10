@@ -1,4 +1,4 @@
-#include "View3D.h"
+#include "slam_viewer/core/View3D.h"
 
 namespace slam_viewer{
 

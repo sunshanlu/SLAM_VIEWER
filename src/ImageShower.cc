@@ -1,4 +1,4 @@
-#include "ImageShower.h"
+#include "slam_viewer/core/ImageShower.h"
 
 namespace slam_viewer{
 

@@ -1,1 +1,1 @@
-#include "PointTypes.h"
+#include "slam_viewer/core/PointTypes.h"

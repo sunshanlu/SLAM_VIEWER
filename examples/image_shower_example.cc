@@ -1,5 +1,5 @@
-#include "ImageShower.h"
-#include "WindowImpl.h"
+#include "slam_viewer/core/ImageShower.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Camera.h"
-#include "Common.h"
+#include "slam_viewer/core/Camera.h"
+#include "slam_viewer/core/Common.h"
 
 namespace slam_viewer{
 

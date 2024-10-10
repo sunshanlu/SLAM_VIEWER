@@ -1,4 +1,4 @@
-#include "Menu.hpp"
+#include "slam_viewer/core/Menu.hpp"
 
 namespace slam_viewer{
 

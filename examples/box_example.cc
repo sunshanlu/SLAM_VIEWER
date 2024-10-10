@@ -1,5 +1,5 @@
-#include "BoxUI.h"
-#include "WindowImpl.h"
+#include "slam_viewer/ui/BoxUI.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

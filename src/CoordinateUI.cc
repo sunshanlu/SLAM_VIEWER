@@ -1,4 +1,4 @@
-#include "CoordinateUI.h"
+#include "slam_viewer/ui/CoordinateUI.h"
 
 namespace slam_viewer{
 

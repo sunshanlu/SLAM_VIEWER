@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Menu.hpp"
-#include "Plotter.hpp"
-#include "View3D.h"
+#include "slam_viewer/core/Menu.hpp"
+#include "slam_viewer/core/Plotter.hpp"
+#include "slam_viewer/core/View3D.h"
 
 namespace slam_viewer {
 class WindowImpl {

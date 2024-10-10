@@ -1,4 +1,4 @@
-#include "BoxUI.h"
+#include "slam_viewer/ui/BoxUI.h"
 
 namespace slam_viewer{
 

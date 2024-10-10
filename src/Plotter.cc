@@ -1,4 +1,4 @@
-#include "Plotter.hpp"
+#include "slam_viewer/core/Plotter.hpp"
 
 namespace slam_viewer{
 

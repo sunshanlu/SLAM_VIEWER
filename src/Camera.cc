@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "slam_viewer/core/Camera.h"
 
 namespace slam_viewer{
 

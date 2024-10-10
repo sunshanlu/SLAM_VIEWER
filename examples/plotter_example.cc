@@ -5,7 +5,7 @@
 
 #include <Eigen/Geometry>
 
-#include "WindowImpl.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

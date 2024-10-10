@@ -1,5 +1,5 @@
-#include "FrameUI.h"
-#include "WindowImpl.h"
+#include "slam_viewer/ui/FrameUI.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

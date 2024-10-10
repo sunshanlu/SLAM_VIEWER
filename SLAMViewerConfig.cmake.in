@@ -1,0 +1,47 @@
+@PACKAGE_INIT@
+
+set( @PROJECT_NAME@_LIBRARIES slam_viewer)
+set( @PROJECT_NAME@_INCLUDE_DIRS @PACKAGE_INCLUDE_DIRS@)
+set( @PROJECT_NAME@_LIBRARY_DIRS @PACKAGE_LIB_DIR@)
+
+include(CMakeFindDependencyMacro)
+
+set(@PROJECT_NAME@_FOUND TRUE)
+foreach(dep Eigen3 Pangolin Sophus PCL TBB)
+    find_dependency(${dep})
+    if(NOT ${dep}_FOUND)
+        message(FATAL_ERROR "Failed to find dependency ${dep}")
+        set(@PROJECT_NAME@_FOUND FALSE)
+        return()
+    endif()
+endforeach()
+
+
+find_dependency(OpenCV 3.4)
+if(NOT OpenCV_FOUND)
+    message(FATAL_ERROR "Failed to find dependency OpenCV")
+    set(@PROJECT_NAME@_FOUND FALSE)
+    return()
+endif()
+
+list(APPEND @PROJECT_NAME@_INCLUDE_DIRS 
+    ${EIGEN3_INCLUDE_DIRS}
+    ${Pangolin_INCLUDE_DIRS}
+    ${Sophus_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
+    ${TBB_INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
+)
+
+list(APPEND @PROJECT_NAME@_LIBRARIES
+    ${Pangolin_LIBRARIES}
+    Sophus::Sophus
+    ${PCL_LIBRARIES}
+    TBB::tbb
+    ${OpenCV_LIBRARIES}
+)
+
+check_required_components(@PROJECT_NAME@)
+if(NOT @PROJECT_NAME@_FOUND)
+    message(FATAL_ERROR "Failed to find all required dependencies for @PROJECT_NAME@")
+endif()

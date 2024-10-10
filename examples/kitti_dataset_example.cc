@@ -1,13 +1,13 @@
 #include <pcl/filters/impl/voxel_grid.hpp>
 
-#include "CloudUI.hpp"
-#include "CoordinateUI.h"
-#include "FrameUI.h"
-#include "ImageShower.h"
+#include "slam_viewer/ui/CloudUI.hpp"
+#include "slam_viewer/ui/CoordinateUI.h"
+#include "slam_viewer/ui/FrameUI.h"
+#include "slam_viewer/core/ImageShower.h"
 #include "KittiHelper/KittiHelper.h"
-#include "PointTypes.h"
-#include "TrajectoryUI.h"
-#include "WindowImpl.h"
+#include "slam_viewer/core/PointTypes.h"
+#include "slam_viewer/ui/TrajectoryUI.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

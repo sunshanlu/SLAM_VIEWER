@@ -5,9 +5,9 @@
 
 #include <Eigen/Geometry>
 
-#include "PointTypes.h"
-#include "TrajectoryUI.h"
-#include "WindowImpl.h"
+#include "slam_viewer/core/PointTypes.h"
+#include "slam_viewer/ui/TrajectoryUI.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 using namespace slam_viewer;
 

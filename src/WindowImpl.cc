@@ -1,4 +1,4 @@
-#include "WindowImpl.h"
+#include "slam_viewer/core/WindowImpl.h"
 
 namespace slam_viewer{
 

@@ -1,4 +1,4 @@
-#include "FrameUI.h"
+#include "slam_viewer/ui/FrameUI.h"
 
 namespace slam_viewer{
 
