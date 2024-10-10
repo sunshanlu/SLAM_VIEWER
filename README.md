@@ -17,12 +17,13 @@
 1. WindowImpl创建；
 2. View创建（Menu菜单、Plotter数据绘图、3d可视化View3D和ImageShower四种）；
 3. Camera创建并绑定View3D；
-4. WindowImpl绑定View；
+4. WindowImpl绑定View（涉及到各部分View的窗口占比）；
 5. 动态创建UIItem并绑定到View3D中。
+6. 注意，针对View创建部分，在需要在可视化线程运行之前完成，针对View3D中渲染的UIItem可以动态的向View3D中添加
 
 在使用样例中有针对KITTI-Odometry数据集的可视化操作，涉及到的渲染UI主要有 Trajectory（轨迹）、Frame（视觉SLAM帧）、Coordinate（坐标系）、Cloud（点云）、Image（图像）。除此之外，还有Menu菜单的配置，主要针对相机的操作，提供了跟踪模式，上帝视角和前置模式三部分的示例。
 
-除此之外，slam_viewer为拓展留了一些常用的接口，如：
+除此之外，slam_viewer为拓展预留了一些接口，如：
 1. CloudUI部分的颜色工厂，用户可以方便的自定义一些可视化的颜色；
 2. UIItem的3d渲染基类，用户可以自定义一些3d渲染的UIItem；
 3. Menu菜单部分的配置，可以通过Menu内置api和lambda表达式的方式快速配置。
@@ -31,32 +32,38 @@
 1. C++17
 2. [OpenCV 3.4.16](https://github.com/opencv/opencv/releases/tag/3.4.16)
 3. [Pangolin 0.9.1](https://github.com/stevenlovegrove/Pangolin/releases/tag/v0.9.1)
-4. Eigen3
-5. PCL
-6. TBB
+4. [Sophus 1.22.10](https://github.com/strasdat/Sophus/releases/tag/1.22.10)
+5. Eigen3
+6. PCL
+7. TBB
 
-针对opencv和pangolin需要去指定的github仓库下载源码进行源码编译和安装。而Eigen3、PCL和TBB则直接通过apt进行安装。
+针对OpenCV、Pangolin和Sophus需要去指定的github仓库下载源码进行源码编译和安装。而Eigen3、PCL和TBB则直接通过apt进行安装。
 ```shell
 sudo apt install libeigen3-dev libpcl-dev libtbb-dev
 ```
 
-# 3. 编译
+# 3. 编译安装
 
 ```shell
 git clone https://github.com/sunshanlu/slam_viewer.git
 cd slam_viewer
 ```
 
-1.编译实例程序
+## 3.1 编译示例程序
 ```shell
-cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+cmake .. -DBUILD_EXAMPLES=ON
 make -j8
 ```
 
-2.不编译实例程序
+## 3.2 不编译示例程序
 ```shell
 cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
 make -j8
+```
+
+## 3.3 slam_viewer安装
+```shell
+sudo make install
 ```
 
 # 4. 使用示例
@@ -95,3 +102,10 @@ make -j8
 ```
 1. data_path: 数据集路径，也就是上述目录中的.对应的绝对路径
 2. seqcuece: 00/01/...，代表kitti数据集序列
+
+# 4.cmake链接slam_viewer示例
+```cmake
+find_package(SLAMViewer REQUIRED)                               # 找到slam_viewer库
+include_directories(${SLAMViewer_INCLUDE_DIRS})                 # 添加slam_viewer的头文件路径
+target_link_libraries(<your_target> ${SLAMViewer_LIBRARIES})    # 链接slam_viewer库
+```
