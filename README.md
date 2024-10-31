@@ -98,7 +98,7 @@ sudo make install
 
 运行`kitti_dataset_example`的命令如下：
 ```shell
-./bin/kitti_viewer <dataset_path> <sequence>
+./bin/kitti_dataset_example <dataset_path> <sequence>
 ```
 1. data_path: 数据集路径，也就是上述目录中的.对应的绝对路径
 2. seqcuece: 00/01/...，代表kitti数据集序列

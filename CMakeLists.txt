@@ -8,7 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(BUILD_EXAMPLES OFF)
+set(BUILD_EXAMPLES ON)
 
 find_package(Pangolin REQUIRED)
 find_package(Sophus REQUIRED)
@@ -16,6 +16,12 @@ find_package(PCL REQUIRED)
 find_package(TBB REQUIRED)
 find_package(OpenCV 3.4 REQUIRED)
 find_package(Eigen3 REQUIRED)
+
+if (POLICY CMP0074)
+    cmake_policy(SET CMP0074 NEW)
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
