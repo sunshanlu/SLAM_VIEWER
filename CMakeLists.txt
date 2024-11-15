@@ -8,7 +8,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(BUILD_EXAMPLES ON)
+if (NOT BUILD_EXAMPLES)
+    set(BUILD_EXAMPLES ON)
+endif()
 
 find_package(Pangolin REQUIRED)
 find_package(Sophus REQUIRED)
@@ -78,6 +80,7 @@ message(
     ========================================================================)
 message(STATUS ${PROJECT_NAME} Configure:)
 message(STATUS CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE})
+message(STATUS BUILD_EXAMPLES: ${BUILD_EXAMPLES})
 message(STATUS CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX})
 message(
     ========================================================================)
