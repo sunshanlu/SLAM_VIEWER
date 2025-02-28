@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(Pangolin REQUIRED)
+find_dependency(Sophus REQUIRED)
+find_dependency(PCL REQUIRED)
+find_dependency(TBB REQUIRED)
+find_dependency(OpenCV REQUIRED)
+find_dependency(Eigen3 REQUIRED)
