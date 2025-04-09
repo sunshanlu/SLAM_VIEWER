@@ -26,11 +26,14 @@ public:
     /// 添加ui_item
     void AddUIItem(UIItem::Ptr ui_item);
 
+    /// 删除ui_item
+    void RemoveUIItem(UIItem::Ptr ui_item);
+
     /// 创建3d窗口布局
     void CreateDisplayLayout(pangolin::Layout layout = pangolin::LayoutEqualVertical) override;
 
 private:
-    std::vector<UIItem::Ptr> ui_items_; ///< View3D待渲染的3d元素
+    std::set<UIItem::Ptr> ui_items_;    ///< View3D待渲染的3d元素
     Camera::Ptr camera_;                ///< 渲染View3D的相机
     Handler3D handler_;                 ///< 3d窗口的handler
     std::mutex mutex_;                  ///< 维护ui_items_的互斥量

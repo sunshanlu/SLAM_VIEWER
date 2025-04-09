@@ -1,6 +1,9 @@
 add_executable(point_cloud_example point_cloud_example.cc)
 target_link_libraries(point_cloud_example slam_viewer)
 
+add_executable(point_cloud_example2 point_cloud_example2.cc)
+target_link_libraries(point_cloud_example2 slam_viewer)
+
 add_executable(trajectory_example trajectory_example.cc)
 target_link_libraries(trajectory_example slam_viewer)
 
@@ -22,3 +25,6 @@ target_link_libraries(box_example slam_viewer)
 add_executable(kitti_dataset_example kitti_dataset_example.cc KittiHelper/KittiHelper.cc)
 target_link_libraries(kitti_dataset_example slam_viewer)
 target_include_directories(kitti_dataset_example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/KittiHelper)
+
+add_executable(remove_uiitem_example remove_uiitem_example.cc)
+target_link_libraries(remove_uiitem_example slam_viewer)

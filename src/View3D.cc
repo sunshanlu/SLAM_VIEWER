@@ -43,7 +43,15 @@ void View3D::AddUIItem(UIItem::Ptr ui_item) {
         return;
 
     std::lock_guard<std::mutex> lock(mutex_);
-    ui_items_.push_back(std::move(ui_item));
+    ui_items_.insert(std::move(ui_item));
+}
+
+void View3D::RemoveUIItem(UIItem::Ptr ui_item){
+    if (!ui_item)
+        return;
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    ui_items_.erase(ui_item);
 }
 
 /**

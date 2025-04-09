@@ -26,7 +26,7 @@ public:
                  pangolin::Attach right, pangolin::Layout layout = pangolin::LayoutEqualVertical);
     
     /// 外部线程请求停止
-    void RequestStop() { request_stop_ = true; }
+    void RequestStop() { request_stop_.store(true); }
 
 private:
     /// 创建展示布局
